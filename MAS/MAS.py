@@ -34,7 +34,7 @@ class MAS:
             Msg = Msg.replace(i, str(X.index(i)))
         return [int(i) for i in Msg]
 
-    def __Index2Msg(self) -> str:
+    def __Index2Msg(self, WordIndex, Dictionary) -> str:
         """
         """
         pass
