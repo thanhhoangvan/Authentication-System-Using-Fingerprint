@@ -25,19 +25,48 @@ class MAS:
         print("+-----------------------------------------+")
     
     # Methods
-    def __Msg2Index(self, X, Msg) -> list:
+    def __Msg2Index(self, Msg, Dictionary) -> list:
         """
+        Convert index of word to message by dictionary list
+        ---
+        Parameters:
+        - Dictionary: List of all word
+        - Msg: Message
+        ---
+        Return:
+        - List of index word in message
+        ---
+        Example
+        - Dictionary: ['c', 'a1', 'a2', 'a3', 'b1', 'b2', 'b3', 'b4']
+        - Message: "a1a2a3b1"
+        - Return: [1, 2, 3, 4]
         """
         if len(Msg) == 0:
             raise Exception("Message is empty!")
-        for i in X:
-            Msg = Msg.replace(i, str(X.index(i)))
+        for i in Dictionary:
+            Msg = Msg.replace(i, str(Dictionary.index(i)))
         return [int(i) for i in Msg]
 
     def __Index2Msg(self, WordIndex, Dictionary) -> str:
         """
+        Convert index of word to message by dictionary list
+        ---
+        Parameters:
+        - WordIndex: List of index word
+        - Dictionary: List of all word
+        ---
+        Return:
+        - Message string
+        ---
+        Example
+        - Dictionary: ['c', 'a1', 'a2', 'a3', 'b1', 'b2', 'b3', 'b4']
+        - WordIndex: [1, 2, 3, 4]
+        - Return: "a1a2a3b1"
         """
-        pass
+        Msg = ""
+        for i in WordIndex:
+            Msg = Msg + Dictionary[i]
+        return Msg
     
     def __PlainText2Index(self, Msg='') -> list:
         """
@@ -171,6 +200,6 @@ if __name__ == '__main__':
     # Mask
     S = b'101000110110101100'
     Cryptosystem = MAS(A, B, Code, X, S, k)
-    print(Cryptosystem.Encode(msg))
+    # print(Cryptosystem.Msg2Index('a1a2a3b1',B))
     
     
