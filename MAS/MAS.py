@@ -97,7 +97,7 @@ class MAS:
             EMsg = EMsg.replace(i, str(self.__B.index(i)))
         return [int(i) for i in EMsg] # split index number to list    
 
-    def __EncodedMsg2Binary(self, EMsg='') -> list:
+    def __EncodedMsg2Binary(self, EMsg='') -> bytes:
         """
         Convert encoded message to binary result
         ---
@@ -121,6 +121,28 @@ class MAS:
             temp = self.__Code[i]
             BinaryResult = BinaryResult + temp
         return BinaryResult
+
+    def __NormalizeLanguage(self) -> tuple:
+        """
+        Convet all word in X to list of index word
+        ---
+        Example
+        ---
+        -  X1 = {'c'}
+        -  X2 = {'ca1', 'a1b1'}
+        -  X3 = {'b1a2', 'ca1a3b1'}
+        -  X4 = {'a2b2'}
+        -  X5 = {'b2a3', 'a3'}
+        -  X = [X1, X2, X3, X4, X5]
+        => Result: X = [[[0]], [[0, 1], [1, 4]], [[0, 1, 3, 4], [4, 2]], [[2, 5]], [[3], [5, 3]]]
+        """
+        Normlized = []
+        for i in self.__X:
+            temp = []
+            for word in i:
+                temp.append(tuple(self.__Msg2Index(word, self.__B)))
+            Normlized.append(tuple(temp))
+        return tuple(Normlized)
 
     def __PADDING(self) -> list:
         """
@@ -152,7 +174,21 @@ class MAS:
     
     def Encode(self, Msg="") -> bytes:
         """
+        Encryption function
+        ---
+        
+        Parameters
+        ---
+        - Msg: Messages to be encrypted
+        
+        Return
+        ---
+        - BitResult: The binary code of the encrypted message
+        
+        Example
+        ---
         """
+        
         # Check null message exception
         if len(Msg) == 0:
             raise Exception("Encoded message is empty!")
@@ -199,6 +235,6 @@ if __name__ == '__main__':
 
     #=======================================
     Cryptosystem = MAS(A, B, Code, X, S, k)
-    # print(Cryptosystem.Msg2Index('a1a2a3b1',B))
+    # print(Cryptosystem.Msg2Index('a1a2a3b1',B)
     
     
