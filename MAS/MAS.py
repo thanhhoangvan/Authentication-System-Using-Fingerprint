@@ -1,3 +1,6 @@
+import random
+# random.seed(9)
+
 class MAS:
     # Attributes
     __A = []
@@ -8,9 +11,10 @@ class MAS:
     __k = 0 # unambiguous degree of Language set
     __m = 0 # bit length of S
     __word_bit = 0 # bit length of code element
+    __Padding_word = '' # word for pading
     
     # Constructor
-    def __init__(self, A, B, Code, X, S, k):
+    def __init__(self, A, B, Code, X, S, k, PaddingWord):
         self.__A = A
         self.__B = B
         self.__Code = Code
@@ -19,6 +23,7 @@ class MAS:
         self.__k = k 
         self.__m = len(self.__S) 
         self.__word_bit = len(list(self.__Code.values())[0])
+        self.__Padding_word = self.__B.index(PaddingWord)
         print("MAS cryptosystem initialization successful!")
         print("Author: Thanh HoangVan")
         print("Github: thanhhoangvan")
@@ -122,7 +127,7 @@ class MAS:
             BinaryResult = BinaryResult + temp
         return BinaryResult
 
-    def __NormalizeLanguage(self) -> tuple:
+    def __NormalizeLanguage(self) -> list:
         """
         Convet all word in X to list of index word
         ---
@@ -140,15 +145,17 @@ class MAS:
         for i in self.__X:
             temp = []
             for word in i:
-                temp.append(tuple(self.__Msg2Index(word, self.__B)))
-            Normlized.append(tuple(temp))
-        return tuple(Normlized)
+                temp.append(self.__Msg2Index(word, self.__B))
+            Normlized.append(temp)
+        return Normlized
 
-    def __PADDING(self) -> list:
+    def __PADDING(self, EMsg) -> list:
         """
         Hàm đệm bit vào chuỗi
         """
-        pass
+        while len(EMsg)*self.__word_bit < self.__m:
+            EMsg.append(self.__Padding_word)
+        return EMsg
     
     def __EXTRACT(self) -> list:
         """
@@ -162,10 +169,19 @@ class MAS:
         """
         pass
     
-    def __e_g(self) -> list:
+    def __e_g(self, k, Language) -> int:
         """
+        Encode function
+        ---
+        Parameter:
+        - k: index of Language
+        - Language: List of Language
+        ---
+        Return
+        ---
+        - A random element corresponding to the index k
         """
-        pass
+        return random.choice(Language[k]) 
     
     def __d_g(self) -> list:
         """
@@ -191,23 +207,55 @@ class MAS:
         
         # Check null message exception
         if len(Msg) == 0:
-            raise Exception("Encoded message is empty!")
+            raise Exception("Input message is empty!")
         
+        Language = self.__NormalizeLanguage() # [[[0]], [[1, 4], [0, 1]], [[0, 1, 3, 4], [4, 2]], [[2, 5]], [[3], [5, 3]]]
+        wordIndex = self.__PlainText2Index(Msg) # [0, 2, 4, 2, 3, 4, 1, 0, 2, 4]
+
         # initialization
         W = [] # list of all encode word in encoded msg
         i, j = 0, 0 # i_current msg word, j_current block bit of encode word(encoded msg)
-        wordIndex = self.__PlainText2Index(Msg)
         n = len(wordIndex) # number of word in message
-        
+
         # main cryptosystem
-#         while True:
-#             count = 1
-#             while True:
-#                 pass
-#                 if (count <= k) and (len(W[j]) < m): # Kiểm tra điều kiện độ dài từ W_j < m
-#                    break # break while 2nd loop
-#             if (i <= n):
-#                 break # break first while loop
+        while True:
+            count = 1
+            temp = [] # Current encoded word
+            while True:
+                if (count >= self.__k) and (len(temp)*self.__word_bit >= self.__m): # Kiểm tra điều kiện độ dài từ W_j < m
+                    if len(temp)*self.__word_bit < self.__m:
+                        temp = self.__PADDING(temp)
+                    
+                    # Masking
+                    # if j == 1:
+                    #     pass
+                    # else:
+                    #     pass
+                    
+                    W.append(temp)
+                    print('-'*20)
+                    j = j + 1
+                    break
+
+              
+
+                #============================================================
+                newEncodedWord = self.__e_g(wordIndex[i], Language)
+                
+                if len(temp + newEncodedWord)*self.__word_bit <= self.__m:
+                    temp = temp + newEncodedWord
+                    count = count + 1
+                    i = i + 1
+                else:
+                    temp = self.__PADDING(temp) 
+                print(count, self.__k)
+                print(temp, '\n')
+
+            #============================================================
+            if (i >= n):
+                break # break first while loop
+                
+            
         return W
     
     def Decode(self) -> bytes:
@@ -227,6 +275,7 @@ if __name__ == '__main__':
     X4 = {'a2b2'}
     X5 = {'b2a3', 'a3'}
     X = [X1, X2, X3, X4, X5]
+    paddingWord = 'b4'
     k = 3
     # Message
     msg = 'u1u3u5u3u4u5u2u1u3u5'
@@ -234,7 +283,5 @@ if __name__ == '__main__':
     S = b'101000110110101100'
 
     #=======================================
-    Cryptosystem = MAS(A, B, Code, X, S, k)
-    # print(Cryptosystem.Msg2Index('a1a2a3b1',B)
-    
-    
+    Cryptosystem = MAS(A, B, Code, X, S, k, paddingWord)
+    print(Cryptosystem.Encode(msg))
