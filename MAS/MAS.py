@@ -97,7 +97,7 @@ class MAS:
             EMsg = EMsg.replace(i, str(self.__B.index(i)))
         return [int(i) for i in EMsg] # split index number to list    
 
-    def __EncodedMsg2Binary(self, Emsg='') -> list:
+    def __EncodedMsg2Binary(self, EMsg='') -> list:
         """
         Convert encoded message to binary result
         ---
@@ -192,13 +192,12 @@ if __name__ == '__main__':
     X5 = {'b2a3', 'a3'}
     X = [X1, X2, X3, X4, X5]
     k = 3
-
-    #=======================================
     # Message
     msg = 'u1u3u5u3u4u5u2u1u3u5'
-    eMsg = 'ca1b1a2'
     # Mask
     S = b'101000110110101100'
+
+    #=======================================
     Cryptosystem = MAS(A, B, Code, X, S, k)
     # print(Cryptosystem.Msg2Index('a1a2a3b1',B))
     
