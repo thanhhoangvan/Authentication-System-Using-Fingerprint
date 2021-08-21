@@ -219,10 +219,38 @@ class MAS:
 
         # main cryptosystem
         while True:
-            count = 1
+            #============================================================
+            if (i >= n):
+                break # break first while loop
+
+            count = 0
             temp = [] # Current encoded word
             while True:
-                if (count >= self.__k) and (len(temp)*self.__word_bit >= self.__m): # Kiểm tra điều kiện độ dài từ W_j < m
+
+                if (count >= self.__k) or (len(temp)*self.__word_bit == self.__m): # Kiểm tra điều kiện độ dài từ W_j < m
+                    if len(temp)*self.__word_bit < self.__m:
+                        temp = self.__PADDING(temp)
+                    
+                    # Masking
+                    # if j == 1:
+                    #     pass
+                    # else:
+                    #     pass
+                    
+                    W.append(temp)
+                    j = j + 1
+                    break
+
+                #============================================================
+                try:
+                    newEncodedWord = self.__e_g(wordIndex[i], Language)
+                    if len(temp + newEncodedWord)*self.__word_bit <= self.__m:
+                        temp = temp + newEncodedWord
+                        count = count + 1
+                        i = i + 1
+                    else:
+                        temp = self.__PADDING(temp) 
+                except:
                     if len(temp)*self.__word_bit < self.__m:
                         temp = self.__PADDING(temp)
                     
@@ -236,26 +264,20 @@ class MAS:
                     print('-'*20)
                     j = j + 1
                     break
-
-              
+                    
+                # if len(temp + newEncodedWord)*self.__word_bit <= self.__m:
+                #     temp = temp + newEncodedWord
+                #     count = count + 1
+                #     i = i + 1
+                # else:
+                #     temp = self.__PADDING(temp) 
 
                 #============================================================
-                newEncodedWord = self.__e_g(wordIndex[i], Language)
-                
-                if len(temp + newEncodedWord)*self.__word_bit <= self.__m:
-                    temp = temp + newEncodedWord
-                    count = count + 1
-                    i = i + 1
-                else:
-                    temp = self.__PADDING(temp) 
+
                 print(count, self.__k)
                 print(temp, '\n')
+            print('='*20)
 
-            #============================================================
-            if (i >= n):
-                break # break first while loop
-                
-            
         return W
     
     def Decode(self) -> bytes:
