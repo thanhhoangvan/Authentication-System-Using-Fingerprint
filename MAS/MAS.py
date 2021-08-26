@@ -1,4 +1,5 @@
 import random
+from itertools import chain
 # random.seed(9)
 
 class MAS:
@@ -157,12 +158,50 @@ class MAS:
             EMsg.append(self.__Padding_word)
         return EMsg
     
-    def __EXTRACT(self) -> list:
+    def __UNPADDING(self, EMsg) -> list:
         """
-        Hàm phân tách tin nhắn thành list các từ
         """
-        pass
-    
+        while self.__Padding_word in EMsg:
+            EMsg.remove(self.__Padding_word)
+        return EMsg
+
+    def EXTRACT(self, Encoded_Word) -> list:
+        """
+        """
+        Language = list(chain.from_iterable(self.__NormalizeLanguage())) # List of all word in language [[0], [0, 1], [1, 4], [0, 1, 3, 4], [4, 2], [2, 5], [5, 3], [3]] 
+        print(Language)
+        TMP = []
+        for i in Encoded_Word:
+            ListChars = self.__UNPADDING(i)
+            n = len(ListChars)
+            
+            Word = []
+            Current = []
+            # def FIND(i):
+            #     print(ListChars[i])
+            #     for t in [1,2]:
+            #         if t == 1: # Add char to old word
+            #             Current = Current + ListChars[i]
+
+            #         else: # Add char to new word
+            #             Word.append(Current)
+            #             Current = [].append(ListChars[i])
+
+            #         if i == n-1:
+            #             print(Current)
+            #             print(Word, '\n')
+            #         else:
+            #             FIND(Word, Current, i + 1)
+
+            #         if t == 1:
+            #             Current.pop()
+            #         else:
+            #             Current = Word.pop()
+
+            # TMP.append(FIND(0))
+
+        return TMP
+        
     def __MASKING(self) -> bytes:
         """
         Hàm thêm lớp mặt nạ vào bit string đầu ra
@@ -280,10 +319,39 @@ class MAS:
 
         return W
     
-    def Decode(self) -> bytes:
+    def Decode(self, EMsg=[]) -> str:
         """
+        Decryption function
+        ---
+        Parameters
+        ---
+        Return
+        ---
+        Example
+        ---
         """
-        pass
+        # Check null message exception
+        if len(EMsg) == 0:
+            raise Exception("Input message is empty!")
+        
+        Msg = []
+        i, j = 0, 0
+        n_word = len(EMsg)  # number of word in encoded message
+
+        while True:
+            
+            # Unmasking
+            if j == 0:
+                # unmasking
+                pass
+            else:
+                # unmasking
+                pass
+            
+            tmp = self.__EXTRACT(EMsg)
+            return tmp
+        
+        
 
 if __name__ == '__main__':
     # Example Initialization
@@ -301,9 +369,13 @@ if __name__ == '__main__':
     k = 3
     # Message
     msg = 'u1u3u5u3u4u5u2u1u3u5'
+    emsg = [[0, 0, 1, 3, 4, 3], [4, 2, 2, 5, 5, 3], [0, 1, 0, 7, 7, 7], [4, 2, 5, 3, 7, 7]]
+    # emsg = [0, 0, 1, 3, 4, 3, 4, 2, 2, 5, 5, 3, 0, 1, 0, 7, 7, 7, 4, 2, 5, 3, 7, 7]
     # Mask
     S = b'101000110110101100'
 
     #=======================================
     Cryptosystem = MAS(A, B, Code, X, S, k, paddingWord)
-    print(Cryptosystem.Encode(msg))
+    # print(Cryptosystem.Decode(emsg))
+
+    Cryptosystem.EXTRACT(emsg)
