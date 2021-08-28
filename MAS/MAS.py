@@ -166,39 +166,36 @@ class MAS:
         return EMsg
 
     def EXTRACT(self, Encoded_Word) -> list:
-        """
-        """
         Language = list(chain.from_iterable(self.__NormalizeLanguage())) # List of all word in language [[0], [0, 1], [1, 4], [0, 1, 3, 4], [4, 2], [2, 5], [5, 3], [3]] 
-        print(Language)
         TMP = []
+        Solution = []
+        W = []
+
+        def FIND(msg, len_msg, k):
+            nonlocal W, TMP, Solution
+            for i in Language:
+                if len(W) + len(i) <= len_msg:
+                    W = W + i
+                    Solution = Solution + [i]
+                else:
+                    continue
+                if (len(W) == len_msg) and (W == msg):
+                    print(W)
+                    print(Solution)
+                    print('='*20)
+                    TMP = TMP + [list(Solution)]
+                else:
+                    FIND(msg, len_msg, k+1)
+                W = W[:-len(i)]
+                Solution.pop()
+        
         for i in Encoded_Word:
             ListChars = self.__UNPADDING(i)
             n = len(ListChars)
-            
-            Word = []
-            Current = []
-            # def FIND(i):
-            #     print(ListChars[i])
-            #     for t in [1,2]:
-            #         if t == 1: # Add char to old word
-            #             Current = Current + ListChars[i]
+            W = []
+            Solution = []
 
-            #         else: # Add char to new word
-            #             Word.append(Current)
-            #             Current = [].append(ListChars[i])
-
-            #         if i == n-1:
-            #             print(Current)
-            #             print(Word, '\n')
-            #         else:
-            #             FIND(Word, Current, i + 1)
-
-            #         if t == 1:
-            #             Current.pop()
-            #         else:
-            #             Current = Word.pop()
-
-            # TMP.append(FIND(0))
+            FIND(i, n, 1)
 
         return TMP
         
@@ -227,7 +224,7 @@ class MAS:
         """
         pass
     
-    def Encode(self, Msg="") -> bytes:
+    def __Encode(self, Msg="") -> bytes:
         """
         Encryption function
         ---
@@ -378,4 +375,5 @@ if __name__ == '__main__':
     Cryptosystem = MAS(A, B, Code, X, S, k, paddingWord)
     # print(Cryptosystem.Decode(emsg))
 
-    Cryptosystem.EXTRACT(emsg)
+    for i in Cryptosystem.EXTRACT(emsg):
+        print(i)
