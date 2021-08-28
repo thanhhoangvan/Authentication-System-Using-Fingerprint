@@ -165,7 +165,29 @@ class MAS:
             EMsg.remove(self.__Padding_word)
         return EMsg
 
-    def EXTRACT(self, Encoded_Word) -> list:
+    def __EXTRACT(self, Encoded_Word) -> list:
+        """
+        The function parses a list of letters and splits them into words
+        ---
+        Parameter:
+        - Encoded_Word: List of all word in  Encoded Message
+        ---
+        Result:
+        - List of corresponding plaintext words
+        ---
+        Example:
+        ---
+        - Encoded_Word
+        [[0, 0, 1, 3, 4, 3], 
+         [4, 2, 2, 5, 5, 3], 
+         [0, 1, 0, 7, 7, 7], 
+         [4, 2, 5, 3, 7, 7]]
+        - Result:
+        [[0], [0, 1, 3, 4], [3]]
+         [[4, 2], [2, 5], [5, 3]]
+         [[0, 1], [0]]
+         [[4, 2], [5, 3]]
+        """
         Language = list(chain.from_iterable(self.__NormalizeLanguage())) # List of all word in language [[0], [0, 1], [1, 4], [0, 1, 3, 4], [4, 2], [2, 5], [5, 3], [3]] 
         TMP = []
         Solution = []
@@ -180,9 +202,6 @@ class MAS:
                 else:
                     continue
                 if (len(W) == len_msg) and (W == msg):
-                    print(W)
-                    print(Solution)
-                    print('='*20)
                     TMP = TMP + [list(Solution)]
                 else:
                     FIND(msg, len_msg, k+1)
@@ -194,7 +213,6 @@ class MAS:
             n = len(ListChars)
             W = []
             Solution = []
-
             FIND(i, n, 1)
 
         return TMP
@@ -367,13 +385,9 @@ if __name__ == '__main__':
     # Message
     msg = 'u1u3u5u3u4u5u2u1u3u5'
     emsg = [[0, 0, 1, 3, 4, 3], [4, 2, 2, 5, 5, 3], [0, 1, 0, 7, 7, 7], [4, 2, 5, 3, 7, 7]]
-    # emsg = [0, 0, 1, 3, 4, 3, 4, 2, 2, 5, 5, 3, 0, 1, 0, 7, 7, 7, 4, 2, 5, 3, 7, 7]
     # Mask
     S = b'101000110110101100'
 
     #=======================================
     Cryptosystem = MAS(A, B, Code, X, S, k, paddingWord)
     # print(Cryptosystem.Decode(emsg))
-
-    for i in Cryptosystem.EXTRACT(emsg):
-        print(i)
