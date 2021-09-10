@@ -55,12 +55,21 @@ def calculate_minutiaes(im, kernel_size=3):
     (y, x) = im.shape
     result = cv.cvtColor(im, cv.COLOR_GRAY2RGB)
     colors = {"ending" : (150, 0, 0), "bifurcation" : (0, 150, 0)}
-
+    
+    # count the number of minutiaes
+#     count = 0
+    End = []
+    Bif = []
+    
     # iterate each pixel minutia
     for i in range(1, x - kernel_size//2):
         for j in range(1, y - kernel_size//2):
             minutiae = minutiae_at(biniry_image, j, i, kernel_size)
             if minutiae != "none":
+                if minutiae == 'ending':
+                    End.append([0, i, j])
+                else:
+                    Bif.append([1, i, j])
                 cv.circle(result, (i,j), radius=2, color=colors[minutiae], thickness=2)
 
-    return result
+    return result, End, Bif

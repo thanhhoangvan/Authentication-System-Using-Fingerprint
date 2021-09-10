@@ -44,7 +44,9 @@ def calculate_singularities(im, angles, tolerance, W, mask):
 
     # DELTA: RED, LOOP:ORAGNE, whorl:INK
     colors = {"loop" : (0, 0, 255), "delta" : (0, 128, 255), "whorl": (255, 153, 255)}
-
+    
+    FingerType = []
+    
     for i in range(3, len(angles) - 2):             # Y
         for j in range(3, len(angles[i]) - 2):      # x
             # mask any singularity outside of the mask
@@ -52,10 +54,14 @@ def calculate_singularities(im, angles, tolerance, W, mask):
             mask_flag = np.sum(mask_slice)
             if mask_flag == (W*5)**2:
                 singularity = poincare_index_at(i, j, angles, tolerance)
-                if singularity != "none":
+#                 if singularity != "none":
+                if singularity == "delta":
+                    
+                    FingerType.append([singularity, i*W, j*W])
+                    
                     cv.rectangle(result, ((j+0)*W, (i+0)*W), ((j+1)*W, (i+1)*W), colors[singularity], 3)
 
-    return result
+    return result, FingerType
 
 
 if __name__ == '__main__':
