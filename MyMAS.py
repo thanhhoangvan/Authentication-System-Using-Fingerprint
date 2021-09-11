@@ -273,9 +273,14 @@ class MAS:
             # else:
             #     # unmasking
             #     pass
-
+            Msg = []
             tmp = self.__EXTRACT(EMsg)
-            return tmp
+            for i in range(len(tmp)):
+                for j in range(len(self.__X)):
+                    if tmp[i] in self.__X[j]:
+                        Msg.append(self.__A[j])
+
+            return Msg
         
         
 
@@ -317,8 +322,7 @@ if __name__ == '__main__':
     
     # Message
     msg = '01234567891234567890123456789'
-    emsg = [[4, 6, 1, 2, 5, 2, 4, 9, 1, 0, 3, 15], [1, 2, 1, 4, 1, 0, 8, 7, 2, 2, 4, 8], [3, 4, 1, 2, 2, 1, 1, 1, 1, 0, 7, 15], [1, 0, 1, 4, 6, 15, 15, 15, 15, 15, 15, 15]]
-    
+
     # Mask
     S = b'10001101101011101000100011011010111010001110100011101000'
     
