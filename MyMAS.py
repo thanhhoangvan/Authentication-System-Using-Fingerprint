@@ -1,7 +1,4 @@
-import random
 from itertools import chain
-# random.seed(9)
-
 class MAS:
     # Attributes
     __A = []
@@ -51,83 +48,37 @@ class MAS:
             raise Exception("Message is empty!")
         for i in Dictionary:
             Msg = Msg.replace(i, str(Dictionary.index(i)))
-        return [int(i) for i in Msg]
-
-    def __Index2Msg(self, WordIndex, Dictionary) -> str:
-        """
-        Convert index of word to message by dictionary list
-        ---
-        Parameters:
-        - WordIndex: List of index word
-        - Dictionary: List of all word
-        ---
-        Return:
-        - Message string
-        ---
-        Example
-        - Dictionary: ['c', 'a1', 'a2', 'a3', 'b1', 'b2', 'b3', 'b4']
-        - WordIndex: [1, 2, 3, 4]
-        - Return: "a1a2a3b1"
-        """
-        Msg = ""
-        for i in WordIndex:
-            Msg = Msg + Dictionary[i]
-        return Msg
-    
-    def __PlainText2Index(self, Msg='') -> list:
-        """
-        Split the words in the Message into a list of index this word in A
-        ---
-        Parameter:
-        - Msg: a message(string)
-        ---
-        Retrun:
-        - List of words
-        ---
-        Example:
-        >>> A = ['u1', 'u2', 'u3']
-        >>> __Msg2Index("u1u3u2u3") -> [0, 2, 1, 2]
-        """
-        if len(Msg) == 0:
-            raise Exception("Message is empty!")
-        for i in self.__A:
-            Msg = Msg.replace(i, str(self.__A.index(i)))
-        return [int(i) for i in Msg]
-
-    def __EncodedMsg2Index(self, EMsg='') -> list:
-        """
-        """
-        if len(msg) == 0:
-            raise Exception("Encoded message is empty!")
-        for i in self.__B:
-            EMsg = EMsg.replace(i, str(self.__B.index(i)))
-        return [int(i) for i in EMsg] # split index number to list    
+        return [int(i) for i in Msg]  
 
     def __EncodedMsg2Binary(self, EMsg='') -> bytes:
         """
         Convert encoded message to binary result
         ---
-        Parameter:
-        - EMsg: String of encoded message(String)
-        ---
-        Result:
-        - bytes string of result
-        ---
-        Example
-        - Encoded message: 'ca1b1a2'
-        with {'c': b'110', 'a1':b'001', 'a2':b'010', 'b1':b'100'}
-        - Result: b'110001100010'
         """
         BinaryResult = b''
-        if len(msg) == 0:
-            raise Exception("Encoded message is empty!")
-        word_index = self.__EncodedMsg2Index(EMsg)
-        EMsg = [self.__B[i] for i in word_index] # split index number to list
-        for i in EMsg:
-            temp = self.__Code[i]
-            BinaryResult = BinaryResult + temp
+        for eword in EMsg:
+            for char in eword:
+                BinaryResult += self.__Code[char]
+            
         return BinaryResult
 
+    def __Binary2Msg(self, bin_msg):
+        """
+        """
+        chunks = [bin_msg[i:i+self.__word_bit] for i in range(0, len(bin_msg), self.__word_bit)]
+        key_list = list(self.__Code.keys())
+        val_list = list(self.__Code.values())
+        
+        Msg = ''
+        for i in chunks:
+            Msg += key_list[val_list.index(i)]
+        
+        word_size = self.__m // self.__word_bit
+        
+        Result = [Msg[i: i+word_size] for i in range(0, len(Msg), word_size)]
+                
+        return Result
+        
     def __NormalizeLanguage(self) -> list:
         """
         Convet all word in X to list of index word
@@ -180,12 +131,24 @@ class MAS:
 
         return TMP
         
-    def __MASKING(self) -> bytes:
+    def __MASKING(self, EMsg=b'') -> bytes:
         """
         Hàm thêm lớp mặt nạ vào bit string đầu ra
         """
-        pass
-    
+        # Generate mask
+        n = len(EMsg)
+        m = len(self.__S)
+        k = n//m
+        Mask = self.__S*k + self.__S[:(n-m*k)]
+
+        Result = b''
+        for i in range(len(EMsg)):
+            if EMsg[i] == Mask[i]:
+                Result += b'0'
+            else:
+                Result += b'1'
+        return Result
+
     def __e_g(self, k, Language) -> int:
         """
         Encode function
@@ -243,7 +206,7 @@ class MAS:
                     TMP = []
                     break
 
-        return W
+        return self.__MASKING(self.__EncodedMsg2Binary(W))
     
     def Decode(self, EMsg=[]) -> str:
         """
@@ -260,19 +223,15 @@ class MAS:
         if len(EMsg) == 0:
             raise Exception("Input message is empty!")
         
+        binary_msg = self.__MASKING(EMsg)
+        EMsg = self.__Binary2Msg(binary_msg)
+
         Msg = []
         i, j = 0, 0
         n_word = len(EMsg)  # number of word in encoded message
 
         while True:
             
-            # # Unmasking
-            # if j == 0:
-            #     # unmasking
-            #     pass
-            # else:
-            #     # unmasking
-            #     pass
             Msg = []
             tmp = self.__EXTRACT(EMsg)
             for i in range(len(tmp)):
@@ -322,18 +281,16 @@ if __name__ == '__main__':
     
     # Message
     msg = '01234567891234567890123456789'
-
+    emsg = ['cghegmigjkdppp', 'beaihcceikhmpp', 'lbkhkogegmigpp', 'jkdmokihcceipp', 'demclbkhkogcgh', 'nmcigjkdbeappp', 'fnoceikhmlbkhp', 'kogppppppppppp']
     # Mask
     S = b'10001101101011101000100011011010111010001110100011101000'
     
 
     #=======================================
     Cryptosystem = MAS(A, B, Code, X, S, k, paddingWord)
+    # Encode message
     EMSG = Cryptosystem.Encode(msg)
-    MSG = Cryptosystem.Decode(EMSG)
+    # print(EMSG)
 
-    print("Encoded message:")
-    print(EMSG)
-    
-    
+    MSG = Cryptosystem.Decode(EMSG)
     print(MSG)
