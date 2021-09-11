@@ -390,4 +390,4 @@ if __name__ == '__main__':
 
     #=======================================
     Cryptosystem = MAS(A, B, Code, X, S, k, paddingWord)
-    # print(Cryptosystem.Decode(emsg))
+    print(Cryptosystem.Decode(emsg))
