@@ -23,11 +23,7 @@ class MAS:
         self.__m = len(self.__S) 
         self.__word_bit = len(list(self.__Code.values())[0])
         self.__Padding_word = PaddingWord
-        print("MAS cryptosystem initialization successful!")
-        print("Author: Thanh HoangVan")
-        print("Github: thanhhoangvan")
-        print("+-----------------------------------------+")
-    
+
     # Methods
     def __Msg2Index(self, Msg, Dictionary) -> list:
         """

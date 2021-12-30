@@ -1,3 +1,4 @@
+import random
 from itertools import chain
 class MAS:
     # Attributes
